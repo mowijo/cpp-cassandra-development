@@ -1,16 +1,7 @@
-FROM mowijo/cpp-development:v1
+FROM mowijo/cpp-development:v2
 
-RUN ( \
-    cd /tmp && \
-    wget http://dist.libuv.org/dist/v1.14.0/libuv-v1.14.0.tar.gz && \
-    tar xzf libuv-v1.14.0.tar.gz && \
-    cd libuv-v1.14.0 && \
-    sh autogen.sh && \
-    ./configure && \
-    make install && \
-    cd && \
-    rm -rf /tmp/libuv-v1.14.0 \
-   )
+RUN apk update
+RUN apk --no-cache add libuv-dev openssl-dev
 
 RUN ( \
     cd /tmp && \
@@ -18,11 +9,11 @@ RUN ( \
     cd cpp-driver && \
     mkdir build && \
     cd build && \
-    cmake .. && \
-    make && \
-    make install && \
+    cmake -GNinja .. && \
+    ninja && \
+    ninja install && \
     cd && \
     rm -rf /tmp/cpp-driver \
 )
 
-RUN ldconfig
+RUN ldconfig /etc/ld.so.conf.d
